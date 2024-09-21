@@ -1,4 +1,5 @@
 import { AuthProvider } from "@propelauth/react";
+import '../style.css';
 
 export default function App({ Component, pageProps }) {
     return (
