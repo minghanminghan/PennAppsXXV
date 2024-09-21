@@ -1,0 +1,92 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# C extensions
+*.so
+
+# Virtual environment
+venv/
+ENV/
+env/
+.venv/
+
+# Flask specific files
+instance/
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+
+# SQLAlchemy-related files
+# SQLite database files
+*.sqlite3
+*.db
+
+# Flask-Migrate/Alembic migration files
+migrations/
+alembic/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+noxfile
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# Environment variables and credentials
+.env
+.env.local
+.env.*.backup
+.env.backup
+
+# macOS
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*~
+.project
+.pydevproject
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Docker
+*.stackdump
+docker-compose*.yaml
