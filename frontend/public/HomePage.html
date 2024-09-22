@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Finance Dashboard</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 1.2rem;
+        }
+        .sidebar {
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            min-width: 220px;
+            max-width: 220px;
+        }
+        .sidebar .nav-link {
+            font-size: 1.1rem;
+            padding: 12px;
+        }
+        .news-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .news-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .news-card .card-body {
+            padding: 15px;
+        }
+        .news-card .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .news-card .card-text {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .news-card .btn {
+            font-size: 0.85rem;
+        }
+        .card-custom {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .progress-custom {
+            background-color: #d4edda;
+            height: 10px;
+            border-radius: 5px;
+        }
+        .form-control {
+            font-size: 1rem;
+        }
+        .btn-submit {
+            background-color: #347928;
+            color: white;
+        }
+        .carousel-control-prev, .carousel-control-next {
+            background-color: #347928;
+            width: 50px;
+        }
+        /* Custom sizing for charts section */
+        .charts-section {
+            display: flex;
+            gap: 20px;
+        }
+        .chart-container {
+            flex-grow: 2;
+        }
+        .pie-container {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<header class="navbar sticky-top flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" style="color: #347928" href="#">SpendWisely</a>
+</header>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" style="color: #347928" href="#">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" style="color: #347928" href="#">Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" style="color: #347928" href="#">Sign out</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Dashboard</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" style="background-color: #347928; color: white;">Share</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" style="background-color: #347928; color: white;">Export</button>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                        This week
+                    </button>
+                </div>
+            </div>
+
+            <!-- News Cards Section with Carousel -->
+            <div id="newsCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+                <div class="carousel-inner" id="news-section">
+                    <!-- News Cards will be dynamically inserted here -->
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+
+            <!-- Line and Pie Charts Section (side-by-side) -->
+            <div class="row charts-section">
+                <!-- Line Chart -->
+                <div class="col-md-4 chart-container">
+                    <div class="card card-custom p-3 mb-4">
+                        <h5 class="card-title">Weekly Overview</h5>
+                        <canvas id="myChart" width="600" height="300"></canvas>
+                    </div>
+                </div>
+
+                <!-- Pie Chart -->
+                <div class="col-md-2 pie-container">
+                    <div class="card card-custom p-3 mb-4">
+                        <h5 class="card-title">Expense Breakdown</h5>
+                        <canvas id="expensePieChart" width="300" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overview Cards: Account Balance, Monthly Savings Goal, Budget -->
+            <div class="row mt-4">
+                <!-- Account Balance Card -->
+                <div class="col-md-4">
+                    <div class="card card-custom p-3 mb-4">
+                        <h5 class="card-title">Account Balance</h5>
+                        <p class="card-text">Total: $25,300</p>
+                        <p class="card-text text-muted">Checking: $10,000</p>
+                        <p class="card-text text-muted">Savings: $15,300</p>
+                    </div>
+                </div>
+
+                <!-- Savings Goal Card with Input -->
+                <div class="col-md-4">
+                    <div class="card card-custom p-3 mb-4">
+                        <h5 class="card-title">Savings Goal</h5>
+                        <form id="savingsForm">
+                            <div class="mb-2">
+                                <label for="savingsGoal" class="form-label">Enter Goal:</label>
+                                <input type="number" id="savingsGoal" class="form-control" placeholder="Enter goal">
+                            </div>
+                            <div class="mb-2">
+                                <label for="savingsSaved" class="form-label">Amount Saved:</label>
+                                <input type="number" id="savingsSaved" class="form-control" placeholder="Enter saved amount">
+                            </div>
+                            <button type="submit" class="btn btn-submit">Update</button>
+                        </form>
+                        <div class="mt-2">
+                            <p class="card-text">Goal: <span id="displayGoal">$1,000</span></p>
+                            <p class="card-text">Saved: <span id="displaySaved">$750</span></p>
+                            <div class="progress mb-2">
+                                <div id="progressBarGoal" class="progress-bar" style="width: 75%; background-color: #347928;" role="progressbar"></div>
+                            </div>
+                            <p class="text-muted" id="goalPercentage">75% of your goal reached</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Overview Card with Input -->
+                <div class="col-md-4">
+                    <div class="card card-custom p-3 mb-4">
+                        <h5 class="card-title">Budget Overview</h5>
+                        <form id="budgetForm">
+                            <div class="mb-2">
+                                <label for="budgetTotal" class="form-label">Enter Budget:</label>
+                                <input type="number" id="budgetTotal" class="form-control" placeholder="Enter budget">
+                            </div>
+                            <div class="mb-2">
+                                <label for="budgetSpent" class="form-label">Amount Spent:</label>
+                                <input type="number" id="budgetSpent" class="form-control" placeholder="Enter spent amount">
+                            </div>
+                            <button type="submit" class="btn btn-submit">Update</button>
+                        </form>
+                        <div class="mt-2">
+                            <p class="card-text">Budget: <span id="displayBudget">$2,000</span></p>
+                            <p class="card-text">Spent: <span id="displaySpent">$1,500</span></p>
+                            <div class="progress mb-2">
+                                <div id="progressBarBudget" class="progress-bar" style="width: 75%; background-color: #dc3545;" role="progressbar"></div>
+                            </div>
+                            <p class="text-muted" id="budgetPercentage">75% of your budget used</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- Bootstrap JS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Fetch financial news and populate cards with carousel -->
+<script>
+    const apiKey = '39b6227d22d1412aba53a23609de21f9'; // Replace with your NewsAPI key
+    const newsSection = document.getElementById('news-section');
+
+    async function fetchFinancialNews() {
+        try {
+            const response = await fetch(`https://newsapi.org/v2/everything?q=finance&sortBy=publishedAt&apiKey=${apiKey}`);
+            const data = await response.json();
+            const articles = data.articles.slice(0, 8);  // Get up to 8 articles for carousel
+
+            let firstItem = true;
+            articles.forEach(article => {
+                const card = document.createElement('div');
+                card.classList.add('carousel-item', 'news-card');
+                if (firstItem) {
+                    card.classList.add('active');
+                    firstItem = false;
+                }
+                card.innerHTML = `
+                    <div class="card">
+                        <img src="${article.urlToImage}" alt="${article.title}">
+                        <div class="card-body">
+                            <h5 class="card-title">${article.title.slice(0, 50)}...</h5>
+                            <p class="card-text">${article.description.slice(0, 100)}...</p>
+                            <a href="${article.url}" target="_blank" class="btn" style="background-color: #347928; color: white;">Read Article</a>
+                        </div>
+                    </div>
+                `;
+                newsSection.appendChild(card);
+            });
+        } catch (error) {
+            console.error('Error fetching news:', error);
+        }
+    }
+    fetchFinancialNews();
+</script>
+
+<!-- Line chart -->
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+            datasets: [{
+                label: 'Data',
+                data: [16000, 22000, 18000, 24000, 23000, 22000, 14000],
+                borderColor: '#28a745',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    beginAtZero: true
+                },
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Pie chart for expense breakdown -->
+<script>
+    var pieCtx = document.getElementById('expensePieChart').getContext('2d');
+    var expensePieChart = new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Groceries', 'Rent', 'Entertainment', 'Utilities', 'Others'],
+            datasets: [{
+                data: [500, 900, 200, 150, 250],
+                backgroundColor: ['#28a745', '#dc3545', '#ffc107', '#17a2b8', '#6c757d'],
+            }]
+        }
+    });
+</script>
+
+<!-- Savings Goal and Budget Form Handling -->
+<script>
+    const savingsForm = document.getElementById('savingsForm');
+    const budgetForm = document.getElementById('budgetForm');
+
+    // Savings Goal Update
+    savingsForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const goal = parseFloat(document.getElementById('savingsGoal').value) || 1000;
+        const saved = parseFloat(document.getElementById('savingsSaved').value) || 750;
+
+        const percentage = Math.min((saved / goal) * 100, 100).toFixed(2);
+        document.getElementById('displayGoal').textContent = `$${goal}`;
+        document.getElementById('displaySaved').textContent = `$${saved}`;
+        document.getElementById('progressBarGoal').style.width = `${percentage}%`;
+        document.getElementById('goalPercentage').textContent = `${percentage}% of your goal reached`;
+    });
+
+    // Budget Overview Update
+    budgetForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const budget = parseFloat(document.getElementById('budgetTotal').value) || 2000;
+        const spent = parseFloat(document.getElementById('budgetSpent').value) || 1500;
+
+        const percentage = Math.min((spent / budget) * 100, 100).toFixed(2);
+        document.getElementById('displayBudget').textContent = `$${budget}`;
+        document.getElementById('displaySpent').textContent = `$${spent}`;
+        document.getElementById('progressBarBudget').style.width = `${percentage}%`;
+        document.getElementById('budgetPercentage').textContent = `${percentage}% of your budget used`;
+    });
+</script>
+
+</body>
+</html>
