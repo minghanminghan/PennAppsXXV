@@ -121,7 +121,7 @@ def grade_spending(data:dict, prefs:dict=None)->dict:
     diffs = {k:get_score(prefs[k], v, 1, 0.05) for k, v in diffs.items()}
 
     #print(nonessential_score, bad_variance_score, savings_score, diffs, sep='\n')
-    score = nonessential_score + bad_variance_score + savings_score + sum(diffs.values())
+    score = int((nonessential_score + bad_variance_score + savings_score + sum(diffs.values()))*100)
     grade = {
         'A+': 100,
         'A': 96,
