@@ -5,3 +5,15 @@ span{
     background-color: #32a873; /* Change background color on hover */
     color: white; /* Change text color on hover */
   }
+
+/* Add this CSS to your stylesheet */
+.charts-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Optional: Add some space between the charts */
+  }
+  
+  .chart-item {
+    flex: 1; /* Make each chart take up equal space */
+    min-width: 0; /* Prevent overflow */
+  }

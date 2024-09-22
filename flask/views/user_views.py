@@ -1,13 +1,11 @@
-# flask/views/user_views.py
-
-from flask import Blueprint, jsonify, request, Flask
+from flask import Blueprint, jsonify, request
+from flask_cors import CORS
 from models import db, User
-from propelauth_flask import init_auth, current_user
+from categorize import parse_csv_data  # Ensure this import is correct
+import os
 
 bp = Blueprint('user', __name__)
-
-
-auth = init_auth("https://5085896.propelauthtest.com", "4af01b80173b966b98fd534f588bbc320f4ca4a6931b7ff181aaf37d37b4f9b6c492f59f9ae5a5558cde22339490cb6d")
+CORS(bp, resources={r"/*": {"origins": "*"}})  # Apply CORS to this Blueprint
 
 @bp.route('/user', methods=['POST'])
 def create_user():
@@ -24,6 +22,25 @@ def get_users():
     return jsonify(users_list)
 
 @bp.route("/api/whoami")
-@auth.require_user
 def who_am_i():
-    return {"user_id": current_user.user_id}
+    return {"user_id": "anonymous"}
+
+@bp.route('/api/parsed-data', methods=['POST'])
+def get_parsed_data():
+    data = request.json
+    month = data.get('month')
+    if not month:
+        return jsonify({"error": "Month parameter is required"}), 400
+
+    file_name = f"{month}.csv"
+    if not file_name:
+        return jsonify({"error": "Invalid month parameter"}), 400
+
+    base_path = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
+    file_path = os.path.join(base_path, file_name)
+
+    if not os.path.exists(file_path):
+        return jsonify({"error": f"File for month {month} not found"}), 404
+
+    data = parse_csv_data(file_path)
+    return jsonify(data.to_dict(orient='records'))
