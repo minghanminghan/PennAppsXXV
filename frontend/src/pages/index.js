@@ -5,7 +5,7 @@ import localFont from "next/font/local";
 import React from "react";
 import {useState} from "react";
 import axios from "axios";
-import CanvasJSReact from '@canvasjs/react-charts';
+// import CanvasJSReact from '@canvasjs/react-charts';
 import Head from 'next/head'; // Correct import for head
 import { withAuthInfo, useLogoutFunction, useRedirectFunctions} from "@propelauth/react";
 

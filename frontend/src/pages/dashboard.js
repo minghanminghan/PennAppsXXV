@@ -5,11 +5,6 @@ import * as d3 from 'd3';
 import { sankey as d3Sankey, sankeyLinkHorizontal } from 'd3-sankey';
 import Head from 'next/head';
 import dayjs from 'dayjs'; 
-
-
-import axios from '../../axiosConfig';
-
-import { withAuthInfo } from '@propelauth/react';
 import { useRedirectFunctions } from '@propelauth/react';
 
 const FinanceDashboard = ({accessToken}) => {
@@ -20,10 +15,18 @@ const FinanceDashboard = ({accessToken}) => {
     const [financialNews, setFinancialNews] = useState([]);
     const [csvData, setCsvData] = useState([]); // State variable to store CSV data
     const sankeyRef = useRef(null);
+    const [grade, setGrade] = useState(''); // Initial value
+    const [score, setScore] = useState(0); // Initial value
+    const [categoryStats, setCategoryStats] = useState({
+        max: {},
+        mean: {},
+        median: {},
+        mode: {},
+        stdev: {},
+      });
     const { redirectToLoginPage, redirectToAccountPage, redirectToSignupPage } = useRedirectFunctions();
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [activeChart, setActiveChart] = useState('pie');
-
     
     // Create refs to store chart instances
     const lineChartRef = useRef(null);
@@ -64,7 +67,9 @@ const FinanceDashboard = ({accessToken}) => {
       useEffect(() => {
         fetchFinancialNews();
         initializeCharts();
+        fetchFinancialWelnessCsvData(selectedMonth);
         fetchParsedCsvData(selectedMonth);
+        
       
         // Cleanup on unmount or re-render
         return () => {
@@ -75,6 +80,7 @@ const FinanceDashboard = ({accessToken}) => {
 
       useEffect(() => {
         fetchParsedCsvData(currentMonth);
+        fetchFinancialWelnessCsvData(currentMonth);
     }, [currentMonth]); // Re-fetch data when the month changes
 
       useEffect(() => {
@@ -114,6 +120,38 @@ const FinanceDashboard = ({accessToken}) => {
       
           const data = await response.json();
           setCsvData(data);
+        } catch (error) {
+          console.error('Error fetching parsed CSV data:', error);
+        }
+    };
+
+    const fetchFinancialWelnessCsvData = async (month) => {
+        try {
+            
+          const monthString = month.format('MMMM').toLowerCase(); // E.g., "january", "february"
+          const response = await fetch('/api/financial-welness-data', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ "month": monthString }),
+          });
+      
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+            const data = await response.json();
+            console.log(data)
+            setGrade(data.grade);
+            setScore(data.score);
+            setCategoryStats({
+                max: data.max,
+                mean: data.mean,
+                median: data.median,
+                mode: data.mode,
+                stdev: data.stdev,
+            });
         } catch (error) {
           console.error('Error fetching parsed CSV data:', error);
         }
@@ -425,6 +463,54 @@ const FinanceDashboard = ({accessToken}) => {
                 </div>
               </div>
             </div>
+
+            {/* Financial Wellness Grade and Report Section */}
+            <div className="card card-custom p-3 mb-4">
+                        <h5 className="card-title">Financial Wellness Report</h5>
+
+                        {/* Display grade with dynamic colors */}
+                        <p>
+                            <strong style={{
+                                fontSize: '24px',
+                                color: (grade === 'A+' || grade === 'A' || grade === 'A-') ? 'green' :
+                                    (grade === 'B+' || grade === 'B' || grade === 'B-') ? 'orange' :
+                                    (grade === 'C+' || grade === 'C' || grade === 'C-') ? 'darkorange' :
+                                    (grade === 'D+' || grade === 'D') ? 'red' : 'darkred'
+                            }}>
+                                Grade: {grade}
+                            </strong>
+                        </p>
+
+                        {/* Display category statistics */}
+                        <h6>Category Statistics:</h6>
+                        <table className="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Max</th>
+                                            <th>Mean</th>
+                                            <th>Median</th>
+                                            <th>Mode</th>
+                                            <th>Standard Deviation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {['Food', 'Housing', 'Miscellaneous', 'Transportation'].map((category) => (
+                                            <tr key={category}>
+                                                <td>{category}</td>
+                                                <td>${categoryStats.max[category]}</td>
+                                                <td>${categoryStats.mean[category]}</td>
+                                                <td>${categoryStats.median[category]}</td>
+                                                <td>${categoryStats.mode[category]}</td>
+                                                <td>{categoryStats.stdev[category] !== null ? `$${categoryStats.stdev[category]}` : 'NaN'}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+
+                        <h6>Overall Financial Score:</h6>
+                        <p><strong>Score: </strong>{score}</p>
+                    </div>
 
             {/* CSV Data Table */}
             <div className="table-responsive">

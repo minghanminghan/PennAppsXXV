@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
 from flask_cors import CORS
 from models import db, User
-from categorize import parse_csv_data  # Ensure this import is correct
+from analyze import sanitize_data,analyze  # Ensure this import is correct
+from categorize import parse_csv_data;
 import os
 
 bp = Blueprint('user', __name__)
@@ -44,3 +45,24 @@ def get_parsed_data():
 
     data = parse_csv_data(file_path)
     return jsonify(data.to_dict(orient='records'))
+
+@bp.route('/api/financial-welness-data', methods=['POST'])
+def get_welness_data():
+    data = request.json
+    month = data.get('month')
+    if not month:
+        return jsonify({"error": "Month parameter is required"}), 400
+
+    file_name = f"{month}.csv"
+    if not file_name:
+        return jsonify({"error": "Invalid month parameter"}), 400
+
+    base_path = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
+    file_path = os.path.join(base_path, file_name)
+
+    if not os.path.exists(file_path):
+        return jsonify({"error": f"File for month {month} not found"}), 404
+
+    data = analyze(file_path)
+    sanitized_data = sanitize_data(data)
+    return jsonify(sanitized_data)
