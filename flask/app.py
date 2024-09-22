@@ -6,20 +6,22 @@ import categorize as cat
 import analyze as anal
 import json
 import pandas as pd
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from config import Config
 
 # Initialize Flask app
 app = Flask(__name__)
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
+CORS(app)
+app.config.from_object(Config)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
-# Load configuration
-app.config.from_object('config.Config')
-
-# Initialize SQLAlchemy
-db.init_app(app)
+from models import User, Statement  # Import your models
 
 # Register Blueprints
 app.register_blueprint(user_views.bp)
+
 
 # Create the database tables within the app context
 with app.app_context():
@@ -44,5 +46,4 @@ def get_analysis():
     return json.dumps(df)
 
 if __name__ == '__main__':
-    # Run the Flask application
     app.run(debug=True)
