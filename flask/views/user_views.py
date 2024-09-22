@@ -6,7 +6,8 @@ from categorize import parse_csv_data;
 import os
 
 bp = Blueprint('user', __name__)
-CORS(bp, resources={r"/*": {"origins": "*"}})  # Apply CORS to this Blueprint
+CORS(bp, resources={r"/*": {"origins": "*"}})  # Apply CORS to this Blueprint\
+
 
 @bp.route('/user', methods=['POST'])
 def create_user():
@@ -68,3 +69,15 @@ def get_welness_data():
     data = analyze(file_path)
     sanitized_data = sanitize_data(data)
     return jsonify(sanitized_data)
+
+@bp.route('/api/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    if file:
+        filename = file.filename
+        file.save(os.path.join('data', filename))
+        return jsonify({'message': 'File uploaded successfully'}), 200
