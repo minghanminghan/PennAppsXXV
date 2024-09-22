@@ -5,7 +5,22 @@ import pandas as pd # for testing
 import categorize as cat
 from datetime import date
 
+import json
+import math
 
+def sanitize_data(data):
+    """
+    Recursively sanitize the data by replacing NaN values with None.
+    """
+    if isinstance(data, dict):
+        return {k: sanitize_data(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [sanitize_data(v) for v in data]
+    elif isinstance(data, float) and math.isnan(data):
+        return None
+    else:
+        return data
+    
 def json_to_dict(json_data:json)->dict:
     parsed = json.loads(json_data, parse_int=int, parse_float=float)
     #print(parsed)
@@ -82,10 +97,10 @@ def grade_spending(data:dict, prefs:dict=None)->dict:
 
     score = 100
     weights = {
-        'saving to income': 0.4,
-        'bad spending to income': 0.4,
-        'real variance': 0.15,
-        'bad spending variance': 0.05
+        'nonessential_score': 0.4,
+        'bad_variance_score': 0.05,
+        'savings_score': 0.4,
+        'diffs': 0.15
     }
 
     # getting shape of data
@@ -99,6 +114,9 @@ def grade_spending(data:dict, prefs:dict=None)->dict:
 
     bad_spending = [data['Amount'][i] for i in data['Amount'].keys() if (data['Category'][i] == 'Miscellaneous' or data['Sub-Category'][i] == 'Private')]
     bad_spending_total = abs(sum(bad_spending))
+
+    if total_income == 0:
+        return {'score': 0, 'grade': 'F'}
     
     income_to_spending = total_spending / total_income
 
@@ -117,11 +135,12 @@ def grade_spending(data:dict, prefs:dict=None)->dict:
 
     nonessential_score = get_score(total_income * 0.3, bad_spending_total / total_income, 1, 0.4) # 40% of score; target = 0.3
     bad_variance_score = get_score(0.2, (pd.DataFrame(bad_spending).std()[0]) / (bad_spending_total / period * 30), 1, 0.05) #5% of score; target = 0.20
-    savings_score = get_score(total_income * 0.2, 1 - income_to_spending, 1, 0.2) # 40% of score; target = 0.2
-    diffs = {k:get_score(prefs[k], v, 1, 0.05) for k, v in diffs.items()}
+    savings_score = get_score(total_income * 0.2, 1 - income_to_spending, 1, 0.4) # 40% of score; target = 0.2
+    diffs = {k:get_score(prefs[k], v, 1, 0.15) for k, v in diffs.items()}
 
     #print(nonessential_score, bad_variance_score, savings_score, diffs, sep='\n')
     score = int((nonessential_score + bad_variance_score + savings_score + sum(diffs.values()))*100)
+    print("score",score)
     grade = {
         'A+': 100,
         'A': 96,
@@ -147,12 +166,12 @@ def grade_spending(data:dict, prefs:dict=None)->dict:
             'grade': my_grade}
 
 
-def analyze(raw=None)->dict:
+def analyze(path: str)->dict:
     '''
     TODO: fix routing issue
     '''
     #data = json_to_dict(json_data)
-    raw = cat.csv_to_df('../data/2024.csv').to_json()
+    raw = cat.parse_csv_data(path).to_json()
     data = json_to_dict(raw)
     
     desc_stats = get_spending_descriptors(data) # descriptive statistics of spending
@@ -166,8 +185,8 @@ def analyze(raw=None)->dict:
 
 
 def main(): # tests
-    test_path = '/data/2024.csv'
-    raw = cat.csv_to_df(test_path).to_json()
+    test_path = '../data/april.csv'
+    raw = cat.parse_csv_data(test_path).to_json()
     data = json_to_dict(raw)
     
     desc_stats = get_spending_descriptors(data) # descriptive statistics of spending
