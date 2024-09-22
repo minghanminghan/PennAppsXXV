@@ -1,0 +1,7 @@
+span{
+    color: green;
+}
+.btn-custom:hover {
+    background-color: #32a873; /* Change background color on hover */
+    color: white; /* Change text color on hover */
+  }
