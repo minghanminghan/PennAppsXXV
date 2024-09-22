@@ -6,7 +6,8 @@ from categorize import parse_csv_data;
 import os
 
 bp = Blueprint('user', __name__)
-CORS(bp, resources={r"/*": {"origins": "*"}})  # Apply CORS to this Blueprint
+CORS(bp, resources={r"/*": {"origins": "*"}})  # Apply CORS to this Blueprint\
+
 
 @bp.route('/user', methods=['POST'])
 def create_user():
@@ -37,11 +38,13 @@ def get_parsed_data():
     if not file_name:
         return jsonify({"error": "Invalid month parameter"}), 400
 
-    base_path = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
+    base_path = os.path.join(os.path.dirname(__file__), '..', 'data')
     file_path = os.path.join(base_path, file_name)
-
+    print(file_path)
     if not os.path.exists(file_path):
         return jsonify({"error": f"File for month {month} not found"}), 404
+    
+    
 
     data = parse_csv_data(file_path)
     return jsonify(data.to_dict(orient='records'))
@@ -57,7 +60,7 @@ def get_welness_data():
     if not file_name:
         return jsonify({"error": "Invalid month parameter"}), 400
 
-    base_path = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
+    base_path = os.path.join(os.path.dirname(__file__), '..', 'data')
     file_path = os.path.join(base_path, file_name)
 
     if not os.path.exists(file_path):
@@ -66,3 +69,15 @@ def get_welness_data():
     data = analyze(file_path)
     sanitized_data = sanitize_data(data)
     return jsonify(sanitized_data)
+
+@bp.route('/api/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    if file:
+        filename = file.filename
+        file.save(os.path.join('data', filename))
+        return jsonify({'message': 'File uploaded successfully'}), 200

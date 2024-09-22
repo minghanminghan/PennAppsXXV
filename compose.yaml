@@ -9,6 +9,7 @@ services:
       - FLASK_ENV=production
     volumes:
       - ./flask:/app
+      - ./data:/app/data
 
   frontend:
     build: ./frontend

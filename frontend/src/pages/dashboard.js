@@ -88,6 +88,30 @@ const FinanceDashboard = ({accessToken}) => {
             initializeCharts(); // Recreate charts when csvData changes
         }
     }, [csvData]);
+
+    const handleFileUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+    
+        const formData = new FormData();
+        formData.append('file', file);
+    
+        try {
+          const response = await fetch('https://alisemihural-flask--5000.prod1.defang.dev/api/upload', {
+            method: 'POST',
+            body: formData,
+          });
+    
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+    
+          const data = await response.json();
+          console.log('File uploaded successfully:', data);
+        } catch (error) {
+          console.error('Error uploading file:', error);
+        }
+      };
     
   
     const fetchFinancialNews = async () => {
@@ -106,7 +130,7 @@ const FinanceDashboard = ({accessToken}) => {
     const fetchParsedCsvData = async (month) => {
         try {
           const monthString = month.format('MMMM').toLowerCase(); // E.g., "january", "february"
-          const response = await fetch('/api/parsed-data', {
+          const response = await fetch('https://alisemihural-flask--5000.prod1.defang.dev/api/parsed-data', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -129,7 +153,7 @@ const FinanceDashboard = ({accessToken}) => {
         try {
             
           const monthString = month.format('MMMM').toLowerCase(); // E.g., "january", "february"
-          const response = await fetch('/api/financial-welness-data', {
+          const response = await fetch('https://alisemihural-flask--5000.prod1.defang.dev/api/financial-welness-data', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -388,7 +412,7 @@ const FinanceDashboard = ({accessToken}) => {
             </div>
 
             {/* Month Selector with Left/Right Arrows */}
-            <div className="d-flex align-items-center">
+            <div className="d-flex align-items-center mb-2">
                   <button 
                     type="button" 
                     className="btn btn-sm btn-outline-secondary" 
@@ -397,7 +421,7 @@ const FinanceDashboard = ({accessToken}) => {
                     &larr;
                   </button>
                   <span className="mx-2">
-                    {currentMonth.format('MMMM YYYY')}
+                    {currentMonth.format('MMMM 2024')}
                   </span>
                   <button 
                     type="button" 
@@ -511,7 +535,7 @@ const FinanceDashboard = ({accessToken}) => {
                         <h6>Overall Financial Score:</h6>
                         <p><strong>Score: </strong>{score}</p>
                     </div>
-
+            <input className="align-items-right mb-2" type="file" onChange={handleFileUpload} />
             {/* CSV Data Table */}
             <div className="table-responsive">
         <table className="table table-striped">
