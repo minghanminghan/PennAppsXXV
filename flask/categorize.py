@@ -2,6 +2,8 @@ import os
 import csv
 import pandas as pd
 
+# test path: 'data/2024.csv'
+
 def add_balance(trans, bal):
     bal += trans
     return [bal]
