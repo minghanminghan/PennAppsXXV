@@ -10,7 +10,7 @@ const logoutFn = useLogoutFunction();
 
   const handleLoginClick = () => {
     if (isLoggedIn) {
-      redirectToAccountPage();
+      window.location.href = '/dashboard';
     } else {
       redirectToLoginPage();
     }

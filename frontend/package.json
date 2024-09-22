@@ -10,9 +10,18 @@
   },
   "dependencies": {
     "@propelauth/react": "^2.0.22",
+    "axios": "^1.7.7",
+    "chart.js": "^4.4.4",
+    "d3": "^7.9.0",
+    "d3-sankey": "^0.12.3",
+    "dayjs": "^1.11.13",
     "next": "^14.2.13",
+    "plotly.js": "^2.35.2",
+    "plotly.js-dist-min": "^2.35.2",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2",
+    "react-sankey": "^0.0.6"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.25.4",

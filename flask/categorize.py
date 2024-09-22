@@ -6,7 +6,7 @@ def add_balance(trans, bal):
     bal += trans
     return [bal]
 
-def csv_to_df(path):
+def parse_csv_data(path):
 
     print(os.getcwd())
 
@@ -39,7 +39,7 @@ def csv_to_df(path):
     #print(f'balance: {balance[:5]}')
 
     parsed_data = [[date[i], desc[i], cat[i], subcat[i], trans[i], balance[i]] for i in range(len(date))]
-    print(parsed_data)
+
 
     # final output
     return pd.DataFrame(parsed_data, columns=['Date', 'Description', 'Category', 'Sub-Category', 'Amount', 'Balance'])
@@ -47,4 +47,5 @@ def csv_to_df(path):
 
 if __name__ == '__main__':
     path = '/Users/alisemihural/Development/hackathons/PennAppsXXV/data/december.csv'
-    print(csv_to_df(path))
+
+    
