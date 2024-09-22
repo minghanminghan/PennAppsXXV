@@ -106,7 +106,7 @@ const FinanceDashboard = ({accessToken}) => {
     const fetchParsedCsvData = async (month) => {
         try {
           const monthString = month.format('MMMM').toLowerCase(); // E.g., "january", "february"
-          const response = await fetch('/api/parsed-data', {
+          const response = await fetch('https://alisemihural-flask--5000.prod1.defang.dev/api/parsed-data', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -129,7 +129,7 @@ const FinanceDashboard = ({accessToken}) => {
         try {
             
           const monthString = month.format('MMMM').toLowerCase(); // E.g., "january", "february"
-          const response = await fetch('/api/financial-welness-data', {
+          const response = await fetch('https://alisemihural-flask--5000.prod1.defang.dev/api/financial-welness-data', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

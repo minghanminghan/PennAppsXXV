@@ -37,11 +37,13 @@ def get_parsed_data():
     if not file_name:
         return jsonify({"error": "Invalid month parameter"}), 400
 
-    base_path = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
+    base_path = os.path.join(os.path.dirname(__file__), '..', 'data')
     file_path = os.path.join(base_path, file_name)
-
+    print(file_path)
     if not os.path.exists(file_path):
         return jsonify({"error": f"File for month {month} not found"}), 404
+    
+    
 
     data = parse_csv_data(file_path)
     return jsonify(data.to_dict(orient='records'))
@@ -57,7 +59,7 @@ def get_welness_data():
     if not file_name:
         return jsonify({"error": "Invalid month parameter"}), 400
 
-    base_path = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
+    base_path = os.path.join(os.path.dirname(__file__), '..', 'data')
     file_path = os.path.join(base_path, file_name)
 
     if not os.path.exists(file_path):

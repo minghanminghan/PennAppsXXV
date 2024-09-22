@@ -48,6 +48,6 @@ def parse_csv_data(path):
     #print(parsed_df)
 
 if __name__ == '__main__':
-    path = '/Users/alisemihural/Development/hackathons/PennAppsXXV/data/december.csv'
+    path = './data/december.csv'
 
     

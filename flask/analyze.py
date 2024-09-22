@@ -185,7 +185,7 @@ def analyze(path: str)->dict:
 
 
 def main(): # tests
-    test_path = '../data/april.csv'
+    test_path = './data/april.csv'
     raw = cat.parse_csv_data(test_path).to_json()
     data = json_to_dict(raw)
     

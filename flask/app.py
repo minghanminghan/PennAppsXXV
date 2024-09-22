@@ -14,7 +14,7 @@ from views import user_views
 # Initialize Flask app
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": "*"}}) 
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 app.config.from_object(Config)
 
 # Initialize SQLAlchemy and Migrate without passing the app
