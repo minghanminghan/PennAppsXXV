@@ -41,12 +41,12 @@ const About = ({ isLoggedIn, user }) => {
 
           <ul className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
             <li>
-              <a href="#" style={{ color: 'black', fontSize: '20px' }} className="nav-link px-2 size">
+              <a href="https://alisemihural-frontend--3000.prod1.defang.dev" style={{ color: 'black', fontSize: '20px' }} className="nav-link px-2 size">
                 Home
               </a>
             </li>
             <li>
-              <a href="#" style={{ color: 'black', fontSize: '20px' }} className="nav-link px-2">
+              <a href="https://alisemihural-frontend--3000.prod1.defang.dev/about" style={{ color: 'black', fontSize: '20px' }} className="nav-link px-2">
                 About
               </a>
             </li>
