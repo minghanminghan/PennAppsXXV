@@ -2,16 +2,19 @@
 
 import React from "react";
 import Head from 'next/head'; // Correct import for head
+import { withAuthInfo, useLogoutFunction, useRedirectFunctions} from "@propelauth/react";
 
-const About = () => {
+const About = ({ isLoggedIn, user }) => {
+    const { redirectToLoginPage, redirectToAccountPage, redirectToSignupPage } = useRedirectFunctions();
 
-  const handleLoginClick = () => {
-    if (isLoggedIn) {
-      window.location.href = '/dashboard';
-    } else {
-      redirectToLoginPage();
-    }
-  };
+    
+      const handleLoginClick = () => {
+        if (isLoggedIn) {
+          window.location.href = '/dashboard';
+        } else {
+          redirectToLoginPage();
+        }
+      };
 
   return (
     <>
@@ -58,7 +61,7 @@ const About = () => {
         <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
           <div className="container flex justify-center mx-auto pt-12">
             <div>
-              <h1 className="xl:text-4xl text-3xl text-center text-black dark:text-white font-semibold pb-6 sm:w-4/6 w-5/6 mx-auto">
+              <h1 className="xl:text-4xl text-3xl text-center text-black dark:text-white font-semibold pb-6 sm:w-4/6 w-5/6 mx-auto mb-4">
                 The Talent Behind SpendWisely
               </h1>
             </div>
