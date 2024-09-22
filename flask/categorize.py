@@ -39,8 +39,12 @@ def csv_to_df(path):
     #print(f'balance: {balance[:5]}')
 
     parsed_data = [[date[i], desc[i], cat[i], subcat[i], trans[i], balance[i]] for i in range(len(date))]
-    #print(parsed_data[:5])
+    print(parsed_data)
 
     # final output
     return pd.DataFrame(parsed_data, columns=['Date', 'Description', 'Category', 'Sub-Category', 'Amount', 'Balance'])
     #print(parsed_df)
+
+if __name__ == '__main__':
+    path = '/Users/alisemihural/Development/hackathons/PennAppsXXV/data/december.csv'
+    print(csv_to_df(path))
